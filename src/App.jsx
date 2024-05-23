@@ -5,7 +5,9 @@ import AppWrapper from "./components/AppWrapper/AppWrapper";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Content from "./components/Content/Content";
+import useAuthentication from "./hooks/useAuthentication";
 function App() {
+  useAuthentication();
   return (
     <AppWrapper>
       <Header />

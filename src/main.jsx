@@ -10,11 +10,12 @@ import {
 import "./index.css";
 import DashboardContent from "./components/DashboardContent/DashboardContent.jsx";
 import { useEffect } from "react";
+import Login from "./components/Login/Login.jsx";
 
-const RedirectToDashboard = () => {
+const RedirectToLogin = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    navigate("/dashboard");
+    navigate("/signOut");
   }, [navigate]);
 
   return null;
@@ -23,7 +24,7 @@ const RedirectToDashboard = () => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RedirectToDashboard />,
+    element: <RedirectToLogin />,
   },
   {
     path: "/dashboard",
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
         element: <DashboardContent />,
       },
     ],
+  },
+  {
+    path: "/signIn",
+    element: <Login state="login" />,
+  },
+  {
+    path: "/signOut",
+    element: <Login state="loginAndRegister" />,
   },
 ]);
 

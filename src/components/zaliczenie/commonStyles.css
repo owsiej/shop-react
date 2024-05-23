@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: 'red';
+  color:red;
   width: 100%;
 }
 
@@ -42,4 +42,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
 }

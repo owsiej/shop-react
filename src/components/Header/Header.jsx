@@ -1,10 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
 const Header = () => {
+  const currentLoggedUser = JSON.parse(
+    window.localStorage.getItem("currentUser")
+  )?.username;
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    window.localStorage.removeItem("currentUser");
+    navigate("/signOut");
+  };
+
   return (
     <div
       style={{
-        height: "100px", // wysokość 100px
+        height: "100px", // wysokość 100px
         width: "100%", // szerokość 100%
         backgroundColor: "#f8d7da", // kolor tła
         display: "flex", // flexbox
@@ -13,7 +23,8 @@ const Header = () => {
         gap: "100px", // odstęp między elementami
       }}
     >
-      Header
+      Jesteś zalogowany jako {currentLoggedUser}
+      <button onClick={handleLogout}>Wyloguj</button>
     </div>
   );
 };

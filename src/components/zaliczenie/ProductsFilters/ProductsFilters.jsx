@@ -1,7 +1,20 @@
+import { useContext } from "react";
 import "../commonStyles.css";
+import { ProductsContext } from "../../../context/productsContext";
 
 const ProductsFilters = () => {
-  return <div className="Wrapper">Products Filters</div>;
+  const { filterProductList } = useContext(ProductsContext);
+
+  return (
+    <div className="Wrapper">
+      <label htmlFor="productFilter">Filter product name</label>
+      <input
+        id="productFilter"
+        type="text"
+        onChange={(event) => filterProductList(event.target.value)}
+      />
+    </div>
+  );
 };
 
 export default ProductsFilters;
