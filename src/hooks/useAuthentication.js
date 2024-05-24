@@ -6,7 +6,7 @@ const useAuthentication = () => {
   useEffect(() => {
     const user = window.localStorage.getItem("currentUser");
     if (!user) {
-      navigate("/signOut");
+      navigate("/signIn");
     }
   });
 };

@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 
 const Header = () => {
-  const currentLoggedUser = JSON.parse(
-    window.localStorage.getItem("currentUser")
-  )?.username;
+  const { authUser, logout } = useContext(AuthContext);
+
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    window.localStorage.removeItem("currentUser");
-    navigate("/signOut");
+    logout();
+    navigate("/signIn");
   };
 
   return (
@@ -23,7 +25,7 @@ const Header = () => {
         gap: "100px", // odstęp między elementami
       }}
     >
-      Jesteś zalogowany jako {currentLoggedUser}
+      Jesteś zalogowany jako {authUser.username}
       <button onClick={handleLogout}>Wyloguj</button>
     </div>
   );

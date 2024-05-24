@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { LinearProgress } from "@mui/material";
 
 import "../commonStyles.css";
@@ -7,15 +6,16 @@ import { ProductsContext } from "../../../context/productsContext";
 import { ShoppingListContext } from "../../../context/shoppingListContext";
 
 const ProductsList = () => {
-  const { productList, setProductList } = useContext(ProductsContext);
-  const { filteredProductList } = useContext(ProductsContext);
-  const { newProductSignal, setNewProductSignal } =
+  const {
+    productList,
+    loadProductsFromApi,
+    productLoadingStatus,
+    filteredProductList,
+  } = useContext(ProductsContext);
+
+  const { addProductToShoppingList, addingProductToShoppingListStatus } =
     useContext(ShoppingListContext);
-  const [productLoadingStatus, setProductLoadingStatus] = useState("initial");
-  const [
-    addingProductToShoppingListStatus,
-    setAddingProductToShoppingListStatus,
-  ] = useState("initial");
+
   const [productListToDisplay, setProductListToDisplay] = useState(productList);
   const [selectedProduct, setSelectedProduct] = useState("");
 
@@ -26,34 +26,6 @@ const ProductsList = () => {
   useEffect(() => {
     setProductListToDisplay(filteredProductList);
   }, [filteredProductList]);
-
-  const loadProductsFromApi = async () => {
-    const url = "http://localhost:4000/api/productsList";
-
-    try {
-      setProductLoadingStatus("loading");
-      const products = await axios.get(url);
-      setProductLoadingStatus("loaded");
-      setProductList(products.data);
-    } catch (error) {
-      setProductLoadingStatus("error");
-      console.log(error);
-    }
-  };
-
-  const addProductToShoppingList = async (product) => {
-    setSelectedProduct(product.name);
-    const url = "http://localhost:4000/api/shoppingList";
-    try {
-      setAddingProductToShoppingListStatus("adding");
-      await axios.post(url, product);
-      setAddingProductToShoppingListStatus("added");
-      setNewProductSignal(!newProductSignal);
-    } catch (error) {
-      setAddingProductToShoppingListStatus("error");
-      console.log(error);
-    }
-  };
 
   return (
     <div className="App">
@@ -77,7 +49,10 @@ const ProductsList = () => {
               {productListToDisplay.map((product) => (
                 <li
                   key={product.id}
-                  onClick={() => addProductToShoppingList(product)}
+                  onClick={() => {
+                    setSelectedProduct(product.name);
+                    addProductToShoppingList(product);
+                  }}
                 >
                   {product.name}
                 </li>

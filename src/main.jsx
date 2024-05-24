@@ -11,11 +11,12 @@ import "./index.css";
 import DashboardContent from "./components/DashboardContent/DashboardContent.jsx";
 import { useEffect } from "react";
 import Login from "./components/Login/Login.jsx";
+import { AuthProvider } from "./context/authContext.jsx";
 
 const RedirectToLogin = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    navigate("/signOut");
+    navigate("/signIn");
   }, [navigate]);
 
   return null;
@@ -42,12 +43,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/signOut",
-    element: <Login state="loginAndRegister" />,
+    element: <Login state="register" />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </>
 );

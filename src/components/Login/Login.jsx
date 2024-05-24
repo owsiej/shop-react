@@ -1,47 +1,54 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { Box, Button, Container, Snackbar, TextField } from "@mui/material";
+import { AuthContext } from "../../context/authContext";
 
 const Login = (props) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loginState, setLoginState] = useState("");
+  const { login, register, authErrorMessage, setAuthErrorMessage, authUser } =
+    useContext(AuthContext);
+  const handleRedirect = () => {
+    if (props.state === "login") {
+      navigate("/signOut");
+    } else if (props.state === "register") {
+      navigate("/signIn");
+    }
+  };
+
+  useEffect(() => {
+    if (authUser.username && authUser.password) {
+      console.log(authUser);
+      navigate("/dashboard");
+    }
+  }, [authUser]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const submitter = event.nativeEvent.submitter.name;
+
     const user = {
       username: username,
       password: password,
     };
-    const availableUsers =
-      JSON.parse(window.localStorage.getItem("availableUsers")) ?? [];
 
-    if (submitter === "loginAndRegister") {
-      availableUsers.push(user);
-      window.localStorage.setItem(
-        "availableUsers",
-        JSON.stringify(availableUsers)
-      );
-      window.localStorage.setItem("currentUser", JSON.stringify(user));
+    let wasSubmitSuccessful;
+
+    switch (props.state) {
+      case "login":
+        wasSubmitSuccessful = login(user);
+        break;
+      case "register":
+        wasSubmitSuccessful = register(user);
+        break;
+    }
+
+    if (wasSubmitSuccessful) {
       navigate("/dashboard");
-    } else if (submitter === "login") {
-      const lookingUser = availableUsers.find(
-        (u) => u.username === user.username
-      );
-      if (!lookingUser) {
-        setLoginState("Podany nazwa użytkownika nie istnieje");
-        setUsername("");
-        setPassword("");
-      } else if (lookingUser.password !== user.password) {
-        setLoginState("Podane hasło jest błędne.");
-        setUsername("");
-        setPassword("");
-      } else {
-        window.localStorage.setItem("currentUser", JSON.stringify(user));
-        navigate("/dashboard");
-      }
+    } else {
+      setUsername("");
+      setPassword("");
     }
   };
 
@@ -72,32 +79,28 @@ const Login = (props) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            name="login"
-          >
-            Przejdź do logowania
+
+          <Button variant="contained" color="primary" type="submit">
+            {props.state === "login" ? "Zaloguj się" : "Zarejestruj i zaloguj"}
           </Button>
-          {props.state === "loginAndRegister" ? (
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              name="loginAndRegister"
-            >
-              Zarejestruj i zaloguj
-            </Button>
-          ) : null}
         </form>
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth={true}
+          onClick={handleRedirect}
+        >
+          {props.state === "login"
+            ? "Przejdź do rejestracji"
+            : "Przejdź do logowania"}
+        </Button>
       </Container>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={loginState !== ""}
+        open={authErrorMessage !== ""}
         autoHideDuration={3000}
-        onClose={() => setLoginState("")}
-        message={loginState}
+        onClose={() => setAuthErrorMessage("")}
+        message={authErrorMessage}
       />
     </Box>
   );
